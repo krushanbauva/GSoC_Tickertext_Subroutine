@@ -7,17 +7,17 @@
 
 int main(int argc, char * argv[]) {
 	AVFormatContext *pFormatCtx = NULL;
-    int             i, frame_count, videoStreamIdx;
-    AVCodecContext  *pCodecCtx = NULL;
-    AVCodec         *pCodec = NULL;
-    AVFrame         *pFrame = NULL;
-    AVFrame         *pFrameRGB = NULL;
-    AVPacket        packet;
-    int             frameFinished;
-    int             numBytes;
-    uint8_t         *buffer = NULL;
+	int             i, frame_count, videoStreamIdx;
+	AVCodecContext  *pCodecCtx = NULL;
+	AVCodec         *pCodec = NULL;
+	AVFrame         *pFrame = NULL;
+	AVFrame         *pFrameRGB = NULL;
+	AVPacket        packet;
+	int             frameFinished;
+	int             numBytes;
+	uint8_t         *buffer = NULL;
     
-    AVDictionary *optionsDict = NULL;
+	AVDictionary *optionsDict = NULL;
 	struct SwsContext *sws_ctx = NULL;
 	
 	if(argc < 2) {
@@ -108,7 +108,7 @@ int main(int argc, char * argv[]) {
 				
 				//Now you have the frame and can do whatever you wish to
 				
-			
+				
 			}
 		}
 		
