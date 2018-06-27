@@ -5,6 +5,28 @@
 
 #include <stdio.h>
 
+#include <leptonica/allheaders.h>
+#include <tesseract/capi.h>
+
+//Display frames for debugging purposes
+void display_frame(AVFrame *frame, int width, int height) {
+	PIX *im;
+	im = pixCreate(width, height, 32);
+	
+	int i, j, p, r, g, b;
+	for(i=0 ; i<height; i++) {
+		for(j=0 ; j<width ; j++) {
+			p = j*3 + i*frame->linesize[0];
+			r = frame->data[0][p];
+			g = frame->data[0][p+1];
+			b = frame->data[0][p+2];
+			pixSetRGBPixel(im, j, i, r, g, b);
+		}
+	}
+	pixDisplay(im, 0, 0);
+	pixDestroy(&im);
+}
+
 int main(int argc, char * argv[]) {
 	AVFormatContext *pFormatCtx = NULL;
 	int             i, frame_count, videoStreamIdx;
@@ -108,6 +130,12 @@ int main(int argc, char * argv[]) {
 				
 				//Now you have the frame and can do whatever you wish to
 				
+				//Debugging purposes
+				/*if(frame_count > 5000) {
+					display_frame(pFrameRGB, pCodecCtx->width, pCodecCtx->height);
+					char c;
+					scanf("%c", &c);
+				}*/
 				
 			}
 		}
