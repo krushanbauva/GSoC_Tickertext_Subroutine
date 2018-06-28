@@ -14,6 +14,8 @@
 #define min_f(a, b, c) (fminf(a, fminf(b, c)))
 #define max_f(a, b, c) (fmaxf(a, fmaxf(b, c)))
 
+#define lum_thresh 84.0
+
 //Conversion to the CIE-LAB color space to get the Luminance
 void rgb_to_lab(float R, float G, float B,float *L, float *a, float *b)
 {
@@ -77,6 +79,37 @@ void display_frame(AVFrame *frame, int width, int height) {
 	}
 	pixDisplay(im, 0, 0);
 	pixDestroy(&im);
+}
+
+//Process frames for tickertext detection
+void process_frame_tickertext(AVFrame *frame, int width, int height) {
+	PIX *cropped_im, *th_im;
+	cropped_im = pixCreate(width, height, 32);
+	th_im = pixCreate(width, height, 32);
+	
+	int i, j, p, r, g, b;
+	float L, A, B;
+	for(i=529 ; i<550; i++) {
+		for(j=105 ; j<715 ; j++) {
+			p = j*3 + i*frame->linesize[0];
+			r = frame->data[0][p];
+			g = frame->data[0][p+1];
+			b = frame->data[0][p+2];
+			pixSetRGBPixel(cropped_im, j, i, r, g, b);
+			rgb_to_lab((float)r, (float)g, (float)b, &L, &A, &B);
+			if(L > lum_thresh) {
+				pixSetRGBPixel(th_im, j, i, 255, 255, 255);
+			}
+			else {
+				pixSetRGBPixel(th_im, j, i, 0, 0, 0);
+			}
+		}
+	}
+	
+	//pixDisplay(cropped_im, 0, 0);
+	pixDisplay(th_im, 0, 0);
+	pixDestroy(&cropped_im);
+	pixDestroy(&th_im);
 }
 
 int main(int argc, char * argv[]) {
@@ -183,11 +216,12 @@ int main(int argc, char * argv[]) {
 				//Now you have the frame and can do whatever you wish to
 				
 				//Debugging purposes
-				/*if(frame_count > 5000) {
-					display_frame(pFrameRGB, pCodecCtx->width, pCodecCtx->height);
+				if(frame_count > 2000) {
+					//display_frame(pFrameRGB, pCodecCtx->width, pCodecCtx->height);
+					process_frame_tickertext(pFrameRGB, pCodecCtx->width, pCodecCtx->height);
 					char c;
 					scanf("%c", &c);
-				}*/
+				}
 				
 			}
 		}
